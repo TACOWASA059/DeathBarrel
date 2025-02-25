@@ -9,13 +9,13 @@ Forge1.20.1
 ## コンフィグ
 | 設定キー	        | デフォルト値	 | 説明                                           |
 |--------------|---------|----------------------------------------------|
-| hasSkull	    | false	  | デスバレルの上にプレイヤーヘッドを生成するか                       |
-| giveJournal  | false	  | プレイヤー死亡時にジャーナルを受け取るか                         |
-| lockChest	   | false	  | デスバレルを所有者のみが開けられるようにするか                      |
-| journalPos	  | false	  | ジャーナルに死亡位置を記録するか（giveJournal が true の場合のみ有効） |
-| timeToErase	 | 300     | デスバレルが削除されるまでの秒数（-1 で無効化）                    |
-| EmptyErase	  | true    | すべてのスロットが空になった場合にデスバレルを削除するか                 |
-| Breakable	   | false   | デスバレルをプレイヤーが破壊できるか                           |
+| hasSkull	    | false	  | 樽の上にプレイヤーヘッドを生成するか                       |
+| giveJournal  | false	  | プレイヤー死亡時に本を受け取るか                         |
+| lockChest	   | false	  | 樽を所有者のみが開けられるようにするか                      |
+| journalPos	  | false	  | 本に死亡位置を記録するか（giveJournal が true の場合のみ有効） |
+| timeToErase	 | 300     | 樽が削除されるまでの秒数（-1 で無効化）                    |
+| EmptyErase	  | true    | すべてのスロットが空になった場合に樽を削除するか                 |
+| Breakable	   | false   | 樽をプレイヤーが破壊できるか                           |
 | dropItems	   | false   | 破壊時に中のアイテムをドロップするか（Breakable が true の場合のみ有効） |
 ## コマンド
 ### コンフィグ設定値を取得
