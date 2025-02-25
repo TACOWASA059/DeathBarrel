@@ -1,13 +1,18 @@
-package com.github.tacowasa059.deathbarrel;
-
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.common.Mod;
 /*
  * このファイルは Death Chest Mod (LGPL 2.1) を基に改変されています。
  * 改変者: tacowasa059
  * 改変日: 2025/02/25
  * 変更内容: その他コンフィグの追加
  */
+package com.github.tacowasa059.deathbarrel;
+
+import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.fml.common.Mod;
+
+import java.util.ArrayList;
+import java.util.List;
+
+
 
 @Mod.EventBusSubscriber(modid = DeathBarrel.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class Config
@@ -28,6 +33,8 @@ public class Config
     public static ForgeConfigSpec.BooleanValue Breakable;
 
     public static ForgeConfigSpec.BooleanValue dropItems;
+
+    public static ForgeConfigSpec.ConfigValue<List<String>> BLACKLIST_ITEMS;
 
     static {
         builder.push("general");
@@ -57,6 +64,12 @@ public class Config
         Config.dropItems = builder.comment("When Breakable is true, whether items should drop upon breaking.\n"
                         + "Breakable が true の場合、death barrelを破壊したときに、中のアイテムをドロップするかどうか。")
                 .define("dropItems", false);
+
+        BLACKLIST_ITEMS = builder.comment("List of blacklisted item IDs (e.g., 'minecraft:diamond', 'modid:custom_sword')\n"+
+                        "ブラックリストのアイテムIDリスト (例) 'minecraft:diamond', 'modid:custom_sword'")
+                .define("blacklistItems", new ArrayList<>(List.of(
+                        "minecraft:barrier"
+                )));
 
         builder.pop();
         SPEC = builder.build();

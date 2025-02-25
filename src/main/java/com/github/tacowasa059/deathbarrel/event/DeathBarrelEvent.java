@@ -6,6 +6,7 @@
  */
 package com.github.tacowasa059.deathbarrel.event;
 
+import com.github.tacowasa059.deathbarrel.BlackListManager;
 import com.github.tacowasa059.deathbarrel.Config;
 import com.github.tacowasa059.deathbarrel.DeathBarrel;
 import com.github.tacowasa059.deathbarrel.DeathBarrelBlocks.DeathBarrelBlockEntity;
@@ -48,7 +49,9 @@ public class DeathBarrelEvent {
 
                 if (items.isEmpty()) items.add(NonNullList.create());
                 if (items.get(items.size()-1).size() >= 54) items.add(NonNullList.create()); // 54個を超えると新しく作る
-                items.get(items.size()-1).add(item.getItem());
+
+                ItemStack itemStack = item.getItem();
+                if(!BlackListManager.isBlacklisted(itemStack)) items.get(items.size()-1).add(itemStack);
 
             }
             if (items.size()>0) {

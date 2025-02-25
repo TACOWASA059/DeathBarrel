@@ -1,6 +1,7 @@
 package com.github.tacowasa059.deathbarrel.event;
 
 
+import com.github.tacowasa059.deathbarrel.BlackListManager;
 import com.github.tacowasa059.deathbarrel.Config;
 import com.github.tacowasa059.deathbarrel.DeathBarrel;
 import com.mojang.brigadier.Command;
@@ -10,11 +11,15 @@ import com.mojang.brigadier.suggestion.SuggestionProvider;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.commands.arguments.ResourceLocationArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.ForgeRegistries;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Mod.EventBusSubscriber(modid = DeathBarrel.MODID)
@@ -44,7 +49,7 @@ public class DeathBarrelCommands {
                                     String value = StringArgumentType.getString(context, "value");
                                     CommandSourceStack source = context.getSource();
                                     if (setConfigValue(key, value)) {
-                                        source.sendSuccess(() -> Component.literal(ChatFormatting.GREEN + "Updated " + key + " to " + ChatFormatting.AQUA + value), true);
+                                        source.sendSuccess(() -> Component.literal(ChatFormatting.GREEN + "Updated " + ChatFormatting.AQUA + key + ChatFormatting.GREEN + " to " + ChatFormatting.AQUA + value), true);
                                     } else {
                                         source.sendFailure(Component.literal(ChatFormatting.RED + "Invalid key or value: " + key + " = " + value));
                                     }
@@ -52,8 +57,61 @@ public class DeathBarrelCommands {
                                 })
                         )
                 )
+                .then(Commands.literal("blacklist")
+                        .then(Commands.literal("add")
+                                .then(Commands.argument("itemID", ResourceLocationArgument.id())
+                                        .suggests(ITEM_SUGGESTIONS)
+                                        .executes(ctx -> {
+                                            String itemID = ResourceLocationArgument.getId(ctx, "itemID").toString();
+                                            boolean success = BlackListManager.addToBlacklist(itemID);
+                                            if (success) {
+                                                ctx.getSource().sendSuccess(()->Component.literal(ChatFormatting.GREEN +"Added " + ChatFormatting.AQUA + itemID + ChatFormatting.GREEN+" to blacklist."), true);
+                                                return 1;
+                                            } else {
+                                                ctx.getSource().sendFailure(Component.literal(ChatFormatting.RED + itemID + " is already in the blacklist."));
+                                                return 0;
+                                            }
+                                        })
+                                )
+                        )
+                        .then(Commands.literal("remove")
+                                .then(Commands.argument("itemID", ResourceLocationArgument.id())
+                                        .suggests(BLACKLIST_SUGGESTIONS)
+                                        .executes(ctx -> {
+                                            String itemID = ResourceLocationArgument.getId(ctx, "itemID").toString();
+                                            boolean success = BlackListManager.removeFromBlacklist(itemID);
+                                            if (success) {
+                                                ctx.getSource().sendSuccess(()->Component.literal(ChatFormatting.GREEN+"Removed " + ChatFormatting.AQUA + itemID + ChatFormatting.GREEN + " from blacklist."), true);
+                                                return 1;
+                                            } else {
+                                                ctx.getSource().sendFailure(Component.literal(ChatFormatting.RED+itemID + " is not in the blacklist."));
+                                                return 0;
+                                            }
+                                        })
+                                )
+                        )
+                        .executes(ctx -> {
+                            List<String> items = Config.BLACKLIST_ITEMS.get();
+                            if (items.isEmpty()) {
+                                ctx.getSource().sendFailure(Component.literal(ChatFormatting.GREEN + "The blacklist is currently empty []."));
+                            } else {
+                                String msg = ChatFormatting.GREEN + "Blacklisted items: ["+ChatFormatting.AQUA + String.join(ChatFormatting.GREEN+", "+ChatFormatting.AQUA, items) + ChatFormatting.GREEN+"]";
+                                ctx.getSource().sendSuccess(()->Component.literal(msg), true);
+                            }
+                            return 1;
+                        })
+
+                )
         );
     }
+
+    private static final SuggestionProvider<CommandSourceStack> ITEM_SUGGESTIONS = (context, builder) ->
+            SharedSuggestionProvider.suggestResource(ForgeRegistries.ITEMS.getKeys(), builder);
+
+    private static final SuggestionProvider<CommandSourceStack> BLACKLIST_SUGGESTIONS = (context, builder) -> {
+        List<String> blacklist = Config.BLACKLIST_ITEMS.get();
+        return SharedSuggestionProvider.suggest(new ArrayList<>(blacklist), builder);
+    };
 
     private static final List<String> CONFIG_KEYS = List.of(
             "hasSkull", "giveJournal", "lockChest", "journalPos",

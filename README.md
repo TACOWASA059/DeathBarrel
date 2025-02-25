@@ -17,18 +17,31 @@ Forge1.20.1
 | EmptyErase	  | true    | すべてのスロットが空になった場合に樽を削除するか                 |
 | Breakable	   | false   | 樽をプレイヤーが破壊できるか                           |
 | dropItems	   | false   | 破壊時に中のアイテムをドロップするか（Breakable が true の場合のみ有効） |
+|blacklistItems| ["minecraft:barrier"]|樽に入らないアイテムのリスト |
 ## コマンド
+
 ### コンフィグ設定値を取得
 ```
 /deathbarrel <key>
 ```
 ### コンフィグ設定値を変更
+key: blacklistItems以外の設定キー
 ```
 /deathbarrel <key> <value>
 ```
 例)
 ```
 /deathbarrel timeToErase 600
+```
+### ブラックリスト管理
+特定のアイテムが死亡時に樽に入らないようにするブラックリスト機能
+- ブラックリストにアイテムを追加
+```
+/deathbarrel blacklist add <itemID>
+```
+- ブラックリストからアイテムを削除
+```
+/deathbarrel blacklist remove <itemID>
 ```
 
 ## ライセンス
